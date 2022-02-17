@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from torch import Tensor
+from torch import Tensor, flatten
 from torch.nn import Module, Linear, Dropout2d, ReLU, BatchNorm2d, \
     MaxPool2d, Conv2d, Sequential
 
@@ -21,7 +21,7 @@ class CNNSystem(Module):
 
         :param num_channels: Input channels of first CNN.
         :type num_channels: int
-        :param in_features: Input features to the first linear layer.
+        :param in_features: Input features of first linear layer.
         :type in_features: int
         :param output_classes: Output classes of the last linear layer.
         :type output_classes: int
@@ -74,16 +74,16 @@ class CNNSystem(Module):
             MaxPool2d(kernel_size=(2,2)))
 
         self.fc_1 =  Sequential(
-            Linear(in_features=in_features, #calculate manually?
+            Linear(in_features=in_features,
                    out_features=500),
             ReLU(),
-            Dropout2d(dropout=0.25))
+            Dropout2d(0.25))
 
         self.fc_2 =  Sequential(
             Linear(in_features=500,
                    out_features=output_classes),
             ReLU(),
-            Dropout2d(dropout=0.5))
+            Dropout2d(0.5))
 
 
     def forward(self, x: Tensor) -> Tensor:
@@ -94,16 +94,14 @@ class CNNSystem(Module):
         :return: Output predictions.
         :rtype: torch.Tensor
         """
-        # Conv layers
+        # Convolutional layers
         h = self.block_1(x)
         h = self.block_2(h)
         h = self.block_3(h)
         h = self.block_4(h)
 
-        # Fit to fc layer? Flatten?
-        #h = h.permute(0, 2, 1, 3).contiguous().view(x.size()[0], -1)
-
-        # Fc layers
+        # Fully connected layers
+        h = flatten(h).unsqueeze(0)
         h = self.fc_1(h)
         h = self.fc_2(h)
         return h

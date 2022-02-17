@@ -4,29 +4,43 @@
 from cnn_system import CNNSystem
 from utils import plot_confusion_matrix
 import numpy as np
-from torch import cuda, no_grad
+from torch import cuda, no_grad, tensor, rand, randint
 from torch.optim import Adam
 from torch.nn import CrossEntropyLoss
 from copy import deepcopy
+from sklearn.metrics import confusion_matrix
 
 def main():
-
+    
     # Create dataset classes from the serialized data splits
 
-    # Create data loaders from the classes
+    # Create data loaders from the classes (dummy)
+    training_dataloader = []
+    validation_dataloader = []
+    testing_dataloader =  []
+
+    for i in range(10):
+        sample = (rand(1,2,640,40), randint(4,(1,)))
+        training_dataloader.append(sample)
+    for i in range(8):
+        sample = (rand(1,2,640,40), randint(4,(1,)))
+        validation_dataloader.append(sample)
+    for i in range(10):
+        sample = (rand(1,2,640,40), randint(4,(1,)))
+        testing_dataloader.append(sample)
 
     # Check if CUDA is available, else use CPU
     device = 'cuda' if cuda.is_available() else 'cpu'
     print(f'Process on {device}', end='\n\n')
 
     # Instantiate our DNN
-    cnn = CNNSystem()
+    cnn = CNNSystem(num_channels=2, in_features=2496, output_classes=4)
         
     # Pass DNN to the available device.
     # cnn = cnn.to(device)
 
     # Give the parameters of our DNN to an optimizer. Use L2 regularization.
-    optimizer = Adam(params=cnn.parameters(), lr=1e-3)
+    optimizer = Adam(params=cnn.parameters(), lr=1e-3, weight_decay=1e-5)
 
     # Instantiate our loss function as a class.
     loss_function = CrossEntropyLoss()
@@ -34,7 +48,7 @@ def main():
     # Variables for the early stopping
     lowest_validation_loss = 1e10
     best_validation_epoch = 0
-    patience = 20
+    patience = 10
     patience_counter = 0
 
     # Start training.
@@ -57,19 +71,15 @@ def main():
             # Zero the gradient of the optimizer.
             optimizer.zero_grad()
 
-            # Get the batches.
-            x_input = feature
-            y_output = cls
-
-            # Give them to the appropriate device.
-            # x_input = x_input.to(device)
-            # y_output = y_output.to(device)
+            # Process on the appropriate device.
+            # feature = feature.to(device)
+            # cls = cls.to(device)
 
             # Get the predictions of our model.
-            y_hat = cnn(x_input)
+            y_hat = cnn(feature)
 
             # Calculate the loss of our model.
-            loss = loss_function(input=y_hat, target=y_output)
+            loss = loss_function(input=y_hat, target=cls)
 
             # Do the backward pass
             loss.backward()
@@ -89,19 +99,15 @@ def main():
             # For every batch of our validation data.
             for i, (feature, cls) in enumerate(validation_dataloader):
 
-                # Get the batch
-                x_1_input = feature
-                y_output = cls
+                # Process on the appropriate device.
+                # feature = feature.to(device)
+                # cls = cls.to(device)
 
-                # Pass the data to the appropriate device.
-                # x_input = x_input.to(device)
-                # y_output = y_output.to(device)
+                # Get the predictions of our model.
+                y_hat = cnn(feature)
 
-                # Get the predictions of the model.
-                y_hat = cnn(x_input)
-
-                # Calculate the loss.
-                loss = loss_function(input=y_hat, target=y_output)
+                # Calculate the loss of our model.
+                loss = loss_function(input=y_hat, target=cls)
 
                 # Log the validation loss.
                 epoch_loss_validation.append(loss.item())
@@ -144,28 +150,31 @@ def main():
                     y_true, y_pred = [], [] # store output for confusion matrix
 
                     for i, (feature, cls) in enumerate(testing_dataloader):
-                        x_1_input = feature
-                        y_output = cls
 
-                        # x_input = x_input.to(device)
-                        # y_output = y_output.to(device)
+                        # Process on the appropriate device.
+                        # feature = feature.to(device)
+                        # cls = cls.to(device)
 
-                        y_hat = cnn(x_1_input)
+                        # Get the predictions of our model.
+                        y_hat = cnn(feature)
 
-                        loss = loss_function(input=y_hat, target=y_output)
+                        # Calculate the loss of our model.
+                        loss = loss_function(input=y_hat, target=cls)
 
                         testing_loss.append(loss.item())
 
+                        # Calculate accuarcy
                         max_index = y_hat.max(dim = 1)[1]
-                        acc += (max_index == y_output).sum().item()
+                        acc += (max_index == cls).sum().item()
 
                         y_pred.append(max_index.tolist())
-                        y_true.append(y_output.tolist())
+                        y_true.append(cls.tolist())
 
                 testing_loss = np.array(testing_loss).mean()
 
                 print(f'Testing loss: {testing_loss:7.4f} | '
-                      f'Accuracy {100*acc/len(testing_dataset.files):5.2f} %')
+                      #f'Accuracy {100*acc/len(testing_dataset.files):5.2f} %')
+                      f'Accuracy {100*acc/10:5.2f} %')
 
                 # Plot confusion matrix
                 y_true = np.array(y_true).flatten()
@@ -179,7 +188,8 @@ def main():
         print(f'Epoch: {epoch:03d} | '
               f'Mean training loss: {epoch_loss_training:7.4f} | '
               f'Mean validation loss {epoch_loss_validation:7.4f} | '
-              f'Accuracy {100*acc/len(validation_dataset.files):5.2f} %')
+              #f'Accuracy {100*acc/len(validation_dataset.files):5.2f} %')
+              f'Accuracy {100*acc/10:5.2f} %')
 
 if __name__ == "__main__":
     main()
