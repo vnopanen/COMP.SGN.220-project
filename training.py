@@ -4,7 +4,7 @@
 from cnn_system import CNNSystem
 from utils import plot_confusion_matrix
 import numpy as np
-from torch import cuda, no_grad, tensor, rand, randint
+from torch import cuda, no_grad, rand, randint
 from torch.optim import Adam
 from torch.nn import CrossEntropyLoss
 from copy import deepcopy
@@ -14,19 +14,19 @@ def main():
     
     # Create dataset classes from the serialized data splits
 
-    # Create data loaders from the classes (dummy)
+    # Create data loaders from the classes (dummy) --> fc1 input size 6720
     training_dataloader = []
     validation_dataloader = []
     testing_dataloader =  []
 
     for i in range(10):
-        sample = (rand(1,2,640,40), randint(4,(1,)))
+        sample = (rand(1,2,260,128), randint(4,(1,)))
         training_dataloader.append(sample)
-    for i in range(8):
-        sample = (rand(1,2,640,40), randint(4,(1,)))
-        validation_dataloader.append(sample)
     for i in range(10):
-        sample = (rand(1,2,640,40), randint(4,(1,)))
+        sample = (rand(1,2,260,128), randint(4,(1,)))
+        validation_dataloader.append(sample)
+    for i in range(20):
+        sample = (rand(1,2,260,128), randint(4,(1,)))
         testing_dataloader.append(sample)
 
     # Check if CUDA is available, else use CPU
@@ -34,12 +34,12 @@ def main():
     print(f'Process on {device}', end='\n\n')
 
     # Instantiate our DNN
-    cnn = CNNSystem(num_channels=2, in_features=2496, output_classes=4)
+    cnn = CNNSystem(num_channels=2, in_features=6720, output_classes=4)
         
     # Pass DNN to the available device.
-    # cnn = cnn.to(device)
+    cnn = cnn.to(device)
 
-    # Give the parameters of our DNN to an optimizer. Use L2 regularization.
+    # Give the parameters of our DNN to an optimizer. Using L2 regularization.
     optimizer = Adam(params=cnn.parameters(), lr=1e-3, weight_decay=1e-5)
 
     # Instantiate our loss function as a class.
@@ -48,7 +48,7 @@ def main():
     # Variables for the early stopping
     lowest_validation_loss = 1e10
     best_validation_epoch = 0
-    patience = 10
+    patience = 5
     patience_counter = 0
 
     # Start training.
@@ -72,8 +72,8 @@ def main():
             optimizer.zero_grad()
 
             # Process on the appropriate device.
-            # feature = feature.to(device)
-            # cls = cls.to(device)
+            feature = feature.to(device)
+            cls = cls.to(device)
 
             # Get the predictions of our model.
             y_hat = cnn(feature)
@@ -90,7 +90,7 @@ def main():
             # Loss the loss of the batch
             epoch_loss_training.append(loss.item())
 
-        # Indicate that we are in training mode, dropout will not function
+        # Indicate that we are in evaluation mode, dropout will not function
         cnn.eval()
         
         # Do not calculate gradients, so everything will be faster.
@@ -100,8 +100,8 @@ def main():
             for i, (feature, cls) in enumerate(validation_dataloader):
 
                 # Process on the appropriate device.
-                # feature = feature.to(device)
-                # cls = cls.to(device)
+                feature = feature.to(device)
+                cls = cls.to(device)
 
                 # Get the predictions of our model.
                 y_hat = cnn(feature)
@@ -133,8 +133,8 @@ def main():
         if patience_counter >= patience:
 
             print('\nExiting due to early stopping', end='\n\n')
-            print(f'Best epoch {best_validation_epoch} with loss \
-                  {lowest_validation_loss}', end='\n\n')
+            print(f'Best epoch {best_validation_epoch} with loss '
+                  f'{lowest_validation_loss}', end='\n\n')
 
             if best_model is None:
                 print('No best model. ')
@@ -152,8 +152,8 @@ def main():
                     for i, (feature, cls) in enumerate(testing_dataloader):
 
                         # Process on the appropriate device.
-                        # feature = feature.to(device)
-                        # cls = cls.to(device)
+                        feature = feature.to(device)
+                        cls = cls.to(device)
 
                         # Get the predictions of our model.
                         y_hat = cnn(feature)

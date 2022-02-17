@@ -16,8 +16,8 @@ class CNNSystem(Module):
                  in_features: int,
                  output_classes: int) -> None:
         """CNNSystem, using four CNN layers, each followed batch norm, ReLU and
-        max pooling. Additionally two fully connected layers, using ReLU as
-        activation, L2 regularization and dropout.
+        max pooling. Additionally two fully connected layers, where the first 
+        one is using ReLU as activation.
 
         :param num_channels: Input channels of first CNN.
         :type num_channels: int
@@ -41,7 +41,7 @@ class CNNSystem(Module):
                    padding='same'),
             BatchNorm2d(cnn_channels_out_1),
             ReLU(),
-            MaxPool2d(kernel_size=(2,2)))
+            MaxPool2d(kernel_size=2, stride=2))
 
         self.block_2 = Sequential(
             Conv2d(in_channels=cnn_channels_out_1,
@@ -51,7 +51,7 @@ class CNNSystem(Module):
                    padding='valid'),
             BatchNorm2d(cnn_channels_out_2),
             ReLU(),
-            MaxPool2d(kernel_size=(2,2)))
+            MaxPool2d(kernel_size=2, stride=2))
 
         self.block_3 = Sequential(
             Conv2d(in_channels=cnn_channels_out_2,
@@ -61,7 +61,7 @@ class CNNSystem(Module):
                    padding='valid'),
             BatchNorm2d(cnn_channels_out_3),
             ReLU(),
-            MaxPool2d(kernel_size=(2,2)))
+            MaxPool2d(kernel_size=2, stride=2))
 
         self.block_4 = Sequential(
             Conv2d(in_channels=cnn_channels_out_3,
@@ -71,7 +71,7 @@ class CNNSystem(Module):
                    padding='valid'),
             BatchNorm2d(cnn_channels_out_4),
             ReLU(),
-            MaxPool2d(kernel_size=(2,2)))
+            MaxPool2d(kernel_size=2, stride=2))
 
         self.fc_1 =  Sequential(
             Linear(in_features=in_features,
@@ -82,7 +82,6 @@ class CNNSystem(Module):
         self.fc_2 =  Sequential(
             Linear(in_features=500,
                    out_features=output_classes),
-            ReLU(),
             Dropout2d(0.5))
 
 
@@ -100,8 +99,8 @@ class CNNSystem(Module):
         h = self.block_3(h)
         h = self.block_4(h)
 
-        # Fully connected layers
-        h = flatten(h).unsqueeze(0)
+        # Fully connected layers. Flatten the tensor first.
+        h = h.permute(0, 2, 1, 3).contiguous().view(x.size()[0], -1)
         h = self.fc_1(h)
         h = self.fc_2(h)
         return h
