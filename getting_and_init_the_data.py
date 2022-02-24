@@ -4,7 +4,7 @@
 
 from pathlib import Path
 from typing import Optional, Union
-from dataset_class import MyDataset
+from dataset_class import IrmasDataset
 from torch.utils.data import DataLoader
 
 __docformat__ = 'reStructuredText'
@@ -12,11 +12,9 @@ __all__ = ['get_dataset', 'get_data_loader']
 
 
 def get_dataset(data_dir: Union[str, Path],
-                data_parent_dir: Optional[str] = '',
                 key_features: Optional[str] = 'features',
-                key_class: Optional[str] = 'class',
-                load_into_memory: Optional[bool] = True) \
-        -> MyDataset:
+                key_class: Optional[str] = 'class') \
+        -> IrmasDataset:
     """Creates and returns a dataset, according to `MyDataset` class.
 
     :param data_dir: Directory to read data from.
@@ -35,14 +33,12 @@ def get_dataset(data_dir: Union[str, Path],
     :return: Dataset.
     :rtype: dataset_class.MyDataset
     """
-    return MyDataset(data_dir=data_dir,
-                     data_parent_dir=data_parent_dir,
+    return IrmasDataset(data_dir=data_dir,
                      key_features=key_features,
-                     key_class=key_class,
-                     load_into_memory=load_into_memory)
+                     key_class=key_class)
 
 
-def get_data_loader(dataset: MyDataset,
+def get_data_loader(dataset: IrmasDataset,
                     batch_size: int,
                     shuffle: bool,
                     drop_last: bool) \

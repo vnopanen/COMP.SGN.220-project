@@ -9,25 +9,51 @@ from torch.optim import Adam
 from torch.nn import CrossEntropyLoss
 from copy import deepcopy
 from sklearn.metrics import confusion_matrix
+from getting_and_init_the_data import get_dataset, get_data_loader
 
 def main():
-    
+
+    train_data_dir = "/COMP.SGN.220-project/Processed_TrainingData/Train"
+    val_data_dir = "/COMP.SGN.220-project/Processed_TrainingData/Validation"
+    test_data_dir = "/COMP.SGN.220-project/Processed_TestingData"
+
     # Create dataset classes from the serialized data splits
+    training_data = get_dataset(train_data_dir)
+    validation_data = get_dataset(val_data_dir)
+    test_data_dir = get_dataset(test_data_dir)
+    batch_size = 4
 
     # Create data loaders from the classes (dummy) --> fc1 input size 6720
-    training_dataloader = []
-    validation_dataloader = []
-    testing_dataloader =  []
+    training_dataloader = get_data_loader(dataset=training_data,
+                                          batch_size=batch_size,
+                                          shuffle=True,
+                                          drop_last=False)
+    validation_dataloader = get_data_loader(dataset=validation_data,
+                                            batch_size=batch_size,
+                                            shuffle=True,
+                                            drop_last=False)
+    testing_dataloader = get_data_loader(dataset=test_data_dir,
+                                         batch_size=batch_size,
+                                         shuffle=True,
+                                         drop_last=False)
+    # This is a demonstration of the dataloader datatype
+    dataiter = iter(training_dataloader)
+    data = dataiter.next()
+    features, labels = data
+    print(features, labels)
+    #
+    # while True:
+    #     continue
 
-    for i in range(10):
-        sample = (rand(1,2,260,128), randint(4,(1,)))
-        training_dataloader.append(sample)
-    for i in range(10):
-        sample = (rand(1,2,260,128), randint(4,(1,)))
-        validation_dataloader.append(sample)
-    for i in range(20):
-        sample = (rand(1,2,260,128), randint(4,(1,)))
-        testing_dataloader.append(sample)
+    # for i in range(10):
+    #     sample = (rand(1,2,260,128), randint(4,(1,)))
+    #     training_dataloader.append(sample)
+    # for i in range(10):
+    #     sample = (rand(1,2,260,128), randint(4,(1,)))
+    #     validation_dataloader.append(sample)
+    # for i in range(20):
+    #     sample = (rand(1,2,260,128), randint(4,(1,)))
+    #     testing_dataloader.append(sample)
 
     # Check if CUDA is available, else use CPU
     device = 'cuda' if cuda.is_available() else 'cpu'
