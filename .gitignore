@@ -1,2 +1,5 @@
 *.pptx
 __pycache__/
+.idea/
+IRMAS-TestingData-Part1/
+IRMAS-TrainingData/
