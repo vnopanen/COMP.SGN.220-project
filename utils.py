@@ -58,7 +58,7 @@ def get_audio_file_data(audio_file: str) \
     :return: Data of the `audio_file` audio file.
     :rtype: numpy.ndarray
     """
-    return lb_load(path=audio_file, sr=None, mono=True)
+    return lb_load(path=audio_file, sr=None, mono=False)
 
 
 

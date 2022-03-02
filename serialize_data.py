@@ -10,16 +10,24 @@ import numpy as np
 
 
 def extract_audio_features(file):
-    audio_data = utils.get_audio_file_data(file)
-    mel = utils.extract_mel_band_energies(audio_data[0], audio_data[1])
 
-    return mel
+    audio_data, sr = utils.get_audio_file_data(file)
+    mel_right = utils.extract_mel_band_energies(audio_data[0], sr)
+    mel_left = utils.extract_mel_band_energies(audio_data[1], sr)
+    tuple = (mel_left, mel_right)
+    return_arr = np.array(tuple)
+    print(return_arr.shape)
+    return return_arr
 
 
 def create_pickle(dirname: str, data, name):
     pickle.dump(data,
                 open(dirname + '/' + name + '.pickle',
                      'wb'))
+
+
+def augment_audio(rate, data):
+    pass
 
 
 def parse_irmas_trainingset(source, destination, split_percentage):

@@ -39,8 +39,8 @@ def main():
     # This is a demonstration of the dataloader datatype
     dataiter = iter(training_dataloader)
     data = dataiter.next()
-    features, labels = data
-    print(features, labels)
+    feature, labels = data
+    print(feature.shape, labels)
     #
     # while True:
     #     continue
@@ -96,7 +96,6 @@ def main():
         for i, (feature, cls) in enumerate(training_dataloader):
             # Zero the gradient of the optimizer.
             optimizer.zero_grad()
-
             # Process on the appropriate device.
             feature = feature.to(device)
             cls = cls.to(device)
