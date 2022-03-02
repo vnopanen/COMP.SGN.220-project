@@ -15,9 +15,9 @@ class CNNSystem(Module):
                  num_channels: int,
                  in_features: int,
                  output_classes: int) -> None:
-        """CNNSystem, using four CNN layers, each followed batch norm, ReLU and
-        max pooling. Additionally two fully connected layers, where the first 
-        one is using ReLU as activation.
+        """CNNSystem, using four CNN layers, each followed by batch norm, ReLU 
+        and max pooling. Additionally two fully connected layers, where the 
+        first one is using ReLU as activation.
 
         :param num_channels: Input channels of first CNN.
         :type num_channels: int
@@ -74,14 +74,12 @@ class CNNSystem(Module):
             MaxPool2d(kernel_size=2, stride=2))
 
         self.fc_1 =  Sequential(
-            Linear(in_features=in_features,
-                   out_features=500),
+            Linear(in_features=in_features, out_features=500),
             ReLU(),
             Dropout2d(0.25))
 
         self.fc_2 =  Sequential(
-            Linear(in_features=500,
-                   out_features=output_classes),
+            Linear(in_features=500, out_features=output_classes),
             Dropout2d(0.5))
 
 
