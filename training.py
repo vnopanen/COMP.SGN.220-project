@@ -3,10 +3,11 @@
 
 from cnn_system import CNNSystem
 from utils import plot_confusion_matrix
-import numpy as np
-from torch import cuda, no_grad, rand, randint
+import numpy as np, os
+from torch import cuda, no_grad, argmax
 from torch.optim import Adam
 from torch.nn import CrossEntropyLoss
+from torch.nn.functional import one_hot
 from copy import deepcopy
 from sklearn.metrics import confusion_matrix
 from getting_and_init_the_data import get_dataset, get_data_loader
@@ -17,50 +18,44 @@ def main():
     val_data_dir = "/COMP.SGN.220-project/Processed_TrainingData/Validation"
     test_data_dir = "/COMP.SGN.220-project/Processed_TestingData"
 
+    current_dir = os.path.dirname(__file__)
+    train_data_dir = current_dir + "\Processed_TrainingData\Train"
+    val_data_dir = current_dir + "\Processed_TrainingData\Validation"
+    test_data_dir = current_dir + "\Processed_TestingData"
+
     # Create dataset classes from the serialized data splits
     training_data = get_dataset(train_data_dir)
     validation_data = get_dataset(val_data_dir)
-    test_data_dir = get_dataset(test_data_dir)
+    testing_data = get_dataset(test_data_dir)
     batch_size = 4
 
-    # Create data loaders from the classes (dummy) --> fc1 input size 6720
+    # Create data loaders from the classes --> fc1 input size 960
     training_dataloader = get_data_loader(dataset=training_data,
                                           batch_size=batch_size,
                                           shuffle=True,
-                                          drop_last=False)
+                                          drop_last=True)
     validation_dataloader = get_data_loader(dataset=validation_data,
                                             batch_size=batch_size,
                                             shuffle=True,
-                                            drop_last=False)
-    testing_dataloader = get_data_loader(dataset=test_data_dir,
+                                            drop_last=True)
+    testing_dataloader = get_data_loader(dataset=testing_data,
                                          batch_size=batch_size,
                                          shuffle=True,
-                                         drop_last=False)
+                                         drop_last=True)
+
     # This is a demonstration of the dataloader datatype
     dataiter = iter(training_dataloader)
     data = dataiter.next()
     feature, labels = data
     print(feature.shape, labels)
-    #
-    # while True:
-    #     continue
 
-    # for i in range(10):
-    #     sample = (rand(1,2,260,128), randint(4,(1,)))
-    #     training_dataloader.append(sample)
-    # for i in range(10):
-    #     sample = (rand(1,2,260,128), randint(4,(1,)))
-    #     validation_dataloader.append(sample)
-    # for i in range(20):
-    #     sample = (rand(1,2,260,128), randint(4,(1,)))
-    #     testing_dataloader.append(sample)
 
     # Check if CUDA is available, else use CPU
     device = 'cuda' if cuda.is_available() else 'cpu'
     print(f'Process on {device}', end='\n\n')
 
     # Instantiate our DNN
-    cnn = CNNSystem(num_channels=2, in_features=6720, output_classes=4)
+    cnn = CNNSystem(num_channels=2, in_features=960, output_classes=4)
         
     # Pass DNN to the available device.
     cnn = cnn.to(device)
@@ -74,7 +69,7 @@ def main():
     # Variables for the early stopping
     lowest_validation_loss = 1e10
     best_validation_epoch = 0
-    patience = 5
+    patience = 0
     patience_counter = 0
 
     # Start training.
@@ -139,7 +134,8 @@ def main():
 
                 # Calculate accuarcy
                 max_index = y_hat.max(dim = 1)[1]
-                acc += (max_index == cls).sum().item()
+                max_index = one_hot(max_index, num_classes=4)
+                acc += (max_index == cls).all(dim=1).sum().item()
                 
         # Calculate mean losses.
         epoch_loss_validation = np.array(epoch_loss_validation).mean()
@@ -190,31 +186,29 @@ def main():
 
                         # Calculate accuarcy
                         max_index = y_hat.max(dim = 1)[1]
-                        acc += (max_index == cls).sum().item()
+                        max_index = one_hot(max_index, num_classes=4)
+                        acc += (max_index == cls).all(dim=1).sum().item()
 
-                        y_pred.append(max_index.tolist())
-                        y_true.append(cls.tolist())
+                        y_pred.append(argmax(max_index, dim=1).tolist())
+                        y_true.append(argmax(cls, dim=1).tolist())
 
                 testing_loss = np.array(testing_loss).mean()
 
                 print(f'Testing loss: {testing_loss:7.4f} | '
-                      #f'Accuracy {100*acc/len(testing_dataset.files):5.2f} %')
-                      f'Accuracy {100*acc/10:5.2f} %')
+                      f'Accuracy {100*acc/len(testing_data.files):5.2f} %')
 
                 # Plot confusion matrix
                 y_true = np.array(y_true).flatten()
                 y_pred = np.array(y_pred).flatten()
                 cm = confusion_matrix(y_true, y_pred)
-                classes = ['0', '1', '2', '3'] # TODO: change these labels
+                classes = ['cel', 'flu', 'pia', 'sax']
                 plot_confusion_matrix(cm, classes)
 
                 break
-
         print(f'Epoch: {epoch:03d} | '
               f'Mean training loss: {epoch_loss_training:7.4f} | '
               f'Mean validation loss {epoch_loss_validation:7.4f} | '
-              #f'Accuracy {100*acc/len(validation_dataset.files):5.2f} %')
-              f'Accuracy {100*acc/10:5.2f} %')
+              f'Accuracy {100*acc/len(validation_data.files):5.2f} %')
 
 if __name__ == "__main__":
     main()

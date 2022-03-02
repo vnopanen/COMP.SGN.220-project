@@ -3,3 +3,6 @@ __pycache__/
 .idea/
 IRMAS-TestingData-Part1/
 IRMAS-TrainingData/
+other_intruments/
+Processed_TrainingData/
+Processed_TestingData/

@@ -133,6 +133,12 @@ def main():
     testing_data_dir = "../COMP.SGN.220-project/IRMAS-TestingData-Part1"
     testing_dir = "../COMP.SGN.220-project/Processed_TestingData"
 
+    # current_dir = os.path.dirname(__file__)
+    # training_data_dir = current_dir + "\IRMAS-TrainingData"
+    # training_dir = current_dir + "\Processed_TrainingData"
+    # testing_data_dir = current_dir + "\IRMAS-TestingData-Part1"
+    # testing_dir = current_dir + "\Processed_TestingData"
+
     validation_split = 0.9
     parse_irmas_trainingset(training_data_dir, training_dir, validation_split)
     parse_irmas_testing_set(testing_data_dir, testing_dir)
