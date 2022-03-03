@@ -73,7 +73,7 @@ def main():
     # Variables for the early stopping
     lowest_validation_loss = 1e10
     best_validation_epoch = 0
-    patience = 0
+    patience = 20
     patience_counter = 0
 
     # Start training.
