@@ -27,7 +27,7 @@ def main():
     training_data = get_dataset(train_data_dir)
     validation_data = get_dataset(val_data_dir)
     testing_data = get_dataset(test_data_dir)
-    batch_size = 4
+    batch_size = 32
 
     # Create data loaders from the classes --> fc1 input size 960
     training_dataloader = get_data_loader(dataset=training_data,
@@ -73,7 +73,7 @@ def main():
     # Variables for the early stopping
     lowest_validation_loss = 1e10
     best_validation_epoch = 0
-    patience = 20
+    patience = 10
     patience_counter = 0
 
     # Start training.
