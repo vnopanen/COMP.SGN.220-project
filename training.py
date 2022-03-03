@@ -44,10 +44,14 @@ def main():
                                          drop_last=True)
 
     # This is a demonstration of the dataloader datatype
+    dataiter = iter(testing_dataloader)
+    data = dataiter.next()
+    features, cls = data
+
+
     dataiter = iter(training_dataloader)
     data = dataiter.next()
-    feature, labels = data
-    print(feature.shape, labels)
+    features, cls = data
 
 
     # Check if CUDA is available, else use CPU
@@ -184,7 +188,7 @@ def main():
 
                         testing_loss.append(loss.item())
 
-                        # Calculate accuarcy
+                        # Calculate accuracy
                         max_index = y_hat.max(dim = 1)[1]
                         max_index = one_hot(max_index, num_classes=4)
                         acc += (max_index == cls).all(dim=1).sum().item()

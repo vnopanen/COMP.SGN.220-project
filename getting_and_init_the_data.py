@@ -17,6 +17,7 @@ def get_dataset(data_dir: Union[str, Path],
         -> IrmasDataset:
     """Creates and returns a dataset, according to `MyDataset` class.
 
+    :param key_test:
     :param data_dir: Directory to read data from.
     :type data_dir: str|pathlib.Path
     :param data_parent_dir: Parent directory of the data, defaults\
@@ -34,8 +35,8 @@ def get_dataset(data_dir: Union[str, Path],
     :rtype: dataset_class.MyDataset
     """
     return IrmasDataset(data_dir=data_dir,
-                     key_features=key_features,
-                     key_class=key_class)
+                        key_features=key_features,
+                        key_class=key_class)
 
 
 def get_data_loader(dataset: IrmasDataset,
@@ -45,6 +46,7 @@ def get_data_loader(dataset: IrmasDataset,
         -> DataLoader:
     """Creates and returns a data loader.
 
+    :param drop_last:
     :param dataset: Dataset to use.
     :type dataset: dataset_class.MyDataset
     :param batch_size: Batch size to use.
@@ -54,7 +56,7 @@ def get_data_loader(dataset: IrmasDataset,
     :return: Data loader, using the specified dataset.
     :rtype: torch.utils.data.DataLoader
     """
-    return DataLoader(dataset=dataset, batch_size=batch_size, shuffle=shuffle, 
+    return DataLoader(dataset=dataset, batch_size=batch_size, shuffle=shuffle,
                       drop_last=drop_last, num_workers=1)
 
 # EOF

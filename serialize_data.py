@@ -6,9 +6,6 @@ import re
 import numpy as np
 
 
-
-
-
 def extract_audio_features(file):
 
     audio_data, sr = utils.get_audio_file_data(file)
@@ -16,7 +13,6 @@ def extract_audio_features(file):
     mel_left = utils.extract_mel_band_energies(audio_data[1], sr)
     tuple = (mel_left, mel_right)
     return_arr = np.array(tuple)
-    print(return_arr.shape)
     return return_arr
 
 
@@ -112,8 +108,6 @@ def parse_irmas_testing_set(source, destination):
                 continue
 
             features = extract_audio_features(root + "/" + file)
-            # Reduce audio length here if necessary
-
             # Parse labels
             base_name = file[:-4]
 
@@ -121,9 +115,14 @@ def parse_irmas_testing_set(source, destination):
             # If file has no relevant instruments skip it
             if label == "0000":
                 continue
+            one_hot = []
+            for char in label:
+                one_hot.append(np.float64(char))
 
+            one_hot_array = np.array(one_hot)
+            data_tuple = (features, one_hot_array)
             new_file = '/[' + label + '] ' + base_name + '.wav'
-            create_pickle(destination, features, new_file)
+            create_pickle(destination, data_tuple, new_file)
     return
 
 

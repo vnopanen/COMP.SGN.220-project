@@ -51,6 +51,7 @@ class IrmasDataset(Dataset):
                         item: int) \
                 -> Tuple[np.ndarray, np.ndarray]:
             the_item: Dict[str, Union[int, np.ndarray]] = self.files[item]
+
             return the_item[0], the_item[1]
 
 # EOF
