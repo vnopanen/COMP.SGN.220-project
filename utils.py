@@ -23,13 +23,13 @@ __all__ = [ 'create_one_hot_encoding',
            ]
 
 INST_PATTERN = '(\[)(...)(\])'
-NUMBER_OF_INSTRUMENTS = 4
 INSTRUMENTS = {
     'cel': 0,
     'flu': 1,
     'pia': 2,
     'sax': 3,
 }
+NUMBER_OF_INSTRUMENTS = len(INSTRUMENTS)
 
 def create_one_hot_encoding(word: str,
                             unique_words: MutableSequence[str]) \

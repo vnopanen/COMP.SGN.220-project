@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from cnn_system import CNNSystem
-from utils import plot_confusion_matrix
+from utils import plot_confusion_matrix, NUMBER_OF_INSTRUMENTS
 import numpy as np, os
 from torch import cuda, no_grad, argmax
 from torch.optim import Adam
@@ -59,7 +59,9 @@ def main():
     print(f'Process on {device}', end='\n\n')
 
     # Instantiate our DNN
-    cnn = CNNSystem(num_channels=2, in_features=960, output_classes=4)
+    cnn = CNNSystem(num_channels=2, 
+                    in_features=960, 
+                    output_classes=NUMBER_OF_INSTRUMENTS)
         
     # Pass DNN to the available device.
     cnn = cnn.to(device)
