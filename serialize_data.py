@@ -52,6 +52,7 @@ def parse_irmas_trainingset(source, destination, split_percentage):
             match = re.search(utils.INST_PATTERN, file)
             if not match:
                 continue
+            # Skip unsupported instruments
             if match.group(2) not in utils.INSTRUMENTS.keys():
                 continue
 
