@@ -19,7 +19,7 @@ Project is: _in progress_ <!--- _complete_ / _no longer being worked on_ -->
 
 ##  Room for Improvement
 
-TODO: fine tune model, add support for more instruments
+TODO: fine tune model, add support for more instruments, add dependencies
 
 ##  Acknowledgements
 
