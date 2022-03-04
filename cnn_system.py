@@ -38,7 +38,7 @@ class CNNSystem(Module):
                    out_channels=cnn_channels_out_1,
                    kernel_size=4,
                    stride=1,
-                   padding='same'),
+                   padding=0),
             BatchNorm2d(cnn_channels_out_1),
             ReLU(),
             MaxPool2d(kernel_size=2, stride=2))
@@ -48,7 +48,7 @@ class CNNSystem(Module):
                    out_channels=cnn_channels_out_2,
                    kernel_size=3,
                    stride=1,
-                   padding='valid'),
+                   padding=0),
             BatchNorm2d(cnn_channels_out_2),
             ReLU(),
             MaxPool2d(kernel_size=2, stride=2))
@@ -58,7 +58,7 @@ class CNNSystem(Module):
                    out_channels=cnn_channels_out_3,
                    kernel_size=2,
                    stride=1,
-                   padding='valid'),
+                   padding=0),
             BatchNorm2d(cnn_channels_out_3),
             ReLU(),
             MaxPool2d(kernel_size=2, stride=2))
@@ -68,7 +68,7 @@ class CNNSystem(Module):
                    out_channels=cnn_channels_out_4,
                    kernel_size=2,
                    stride=1,
-                   padding='valid'),
+                   padding=0),
             BatchNorm2d(cnn_channels_out_4),
             ReLU(),
             MaxPool2d(kernel_size=2, stride=2))

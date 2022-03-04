@@ -103,7 +103,8 @@ def main():
             y_hat = cnn(feature)
 
             # Calculate the loss of our model.
-            loss = loss_function(input=y_hat, target=cls)
+            target = argmax(cls, dim=1)
+            loss = loss_function(input=y_hat, target=target)
 
             # Do the backward pass
             loss.backward()
@@ -131,7 +132,8 @@ def main():
                 y_hat = cnn(feature)
 
                 # Calculate the loss of our model.
-                loss = loss_function(input=y_hat, target=cls)
+                target = argmax(cls, dim=1)
+                loss = loss_function(input=y_hat, target=target)
 
                 # Log the validation loss.
                 epoch_loss_validation.append(loss.item())
@@ -184,7 +186,8 @@ def main():
                         y_hat = cnn(feature)
 
                         # Calculate the loss of our model.
-                        loss = loss_function(input=y_hat, target=cls)
+                        target = argmax(cls, dim=1)
+                        loss = loss_function(input=y_hat, target=target)
 
                         testing_loss.append(loss.item())
 
