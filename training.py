@@ -195,7 +195,7 @@ def main():
                         max_index = y_hat.max(dim = 1)[1]
                         max_index = one_hot(max_index,
                                             num_classes=NUMBER_OF_INSTRUMENTS)
-                        acc += (max_index == cls).all(dim=1).sum().item()
+                        acc += sum(cls[cls==max_index]).item()
 
                         y_pred.append(argmax(max_index, dim=1).tolist())
                         y_true.append(argmax(cls, dim=1).tolist())
