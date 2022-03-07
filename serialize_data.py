@@ -22,12 +22,18 @@ def create_pickle(dirname: str, data, name):
                      'wb'))
 
 
-def augment_audio(rate, data):
-    pass
+def augment_audio(data):
+    """Perform simple sterowise data augmentation"""
+    augmentations = [data]
+    swap = np.ndarray(data.shape, dtype=data.dtype)
+    swap[0, :] = data[1, :]
+    swap[1, :] = data[0, :]
+    augmentations.append(swap)
+
+    return augmentations
 
 
 def parse_irmas_trainingset(source, destination, split_percentage):
-
     files_list = []
     data_path = os.path.abspath(source)
 
@@ -66,14 +72,22 @@ def parse_irmas_trainingset(source, destination, split_percentage):
             label = utils.create_one_hot_encoding(match.group(2),
                                                   list(utils.INSTRUMENTS
                                                        .keys()))
+
             if match:
                 data_tuple = (features, label)
                 create_pickle(dest_dir, data_tuple, '/[' + match.group(2)
-                              + ']_' + str(count))
+                                  + ']_' + str(count))
+                count += 1
+                # augmentations = augment_audio(features)
+                # count += 10
+                # for augmentation in augmentations:
+                #     data_tuple = (augmentation, label)
+                #     create_pickle(dest_dir, data_tuple, '/[' + match.group(2)
+                #                   + ']_' + str(count))
+                #     count += 1
             else:
                 print("Dataset error")
-            count += 1
-            # augmentations later
+
 
     return
 

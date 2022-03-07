@@ -25,9 +25,16 @@ __all__ = [ 'create_one_hot_encoding',
 INST_PATTERN = '(\[)(...)(\])'
 INSTRUMENTS = {
     'cel': 0,
-    'flu': 1,
-    'pia': 2,
-    'sax': 3,
+    'cla': 1,
+    'flu': 2,
+    'gac': 3,
+    'gel': 4,
+    'org': 5,
+    'pia': 6,
+    'sax': 7,
+    'tru': 8,
+    'vio': 9,
+    'voi': 10
 }
 NUMBER_OF_INSTRUMENTS = len(INSTRUMENTS)
 
