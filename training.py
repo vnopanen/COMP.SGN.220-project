@@ -47,11 +47,12 @@ def main():
     dataiter = iter(testing_dataloader)
     data = dataiter.next()
     features, cls = data
-
+    print(features.shape, cls.shape)
 
     dataiter = iter(training_dataloader)
     data = dataiter.next()
     features, cls = data
+    print(features.shape, cls.shape)
 
 
     # Check if CUDA is available, else use CPU
@@ -60,7 +61,7 @@ def main():
 
     # Instantiate our DNN
     cnn = CNNSystem(num_channels=2, 
-                    in_features=960, 
+                    in_features=6720,
                     output_classes=NUMBER_OF_INSTRUMENTS)
         
     # Pass DNN to the available device.

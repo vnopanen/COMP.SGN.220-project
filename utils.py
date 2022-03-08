@@ -73,7 +73,7 @@ def extract_mel_band_energies(audio_file: np.ndarray,
                               sr: Optional[int] = 44100,
                               n_fft: Optional[int] = 1024,
                               hop_length: Optional[int] = 512,
-                              n_mels: Optional[int] = 40) \
+                              n_mels: Optional[int] = 128) \
         -> np.ndarray:
     """Extracts and returns the mel-band energies from the `audio_file` file.
 

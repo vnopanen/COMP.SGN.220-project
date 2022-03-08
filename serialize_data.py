@@ -74,17 +74,17 @@ def parse_irmas_trainingset(source, destination, split_percentage):
                                                        .keys()))
 
             if match:
-                data_tuple = (features, label)
-                create_pickle(dest_dir, data_tuple, '/[' + match.group(2)
-                                  + ']_' + str(count))
-                count += 1
-                # augmentations = augment_audio(features)
-                # count += 10
-                # for augmentation in augmentations:
-                #     data_tuple = (augmentation, label)
-                #     create_pickle(dest_dir, data_tuple, '/[' + match.group(2)
+                # data_tuple = (features, label)
+                # create_pickle(dest_dir, data_tuple, '/[' + match.group(2)
                 #                   + ']_' + str(count))
-                #     count += 1
+                # count += 1
+                augmentations = augment_audio(features)
+
+                for augmentation in augmentations:
+                    data_tuple = (augmentation, label)
+                    create_pickle(dest_dir, data_tuple, '/[' + match.group(2)
+                                  + ']_' + str(count))
+                    count += 1
             else:
                 print("Dataset error")
 
