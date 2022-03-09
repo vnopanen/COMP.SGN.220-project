@@ -9,7 +9,7 @@
 
 ##  Usage
 
-- extract IRMAS-TrainingData and IRMAS-TestingData-Part1 to the current workspace (currently supporting 'cel', 'flu', 'pia', 'sax') 
+- extract IRMAS-TrainingData and IRMAS-TestingData-Part1 to the current workspace
 - run [serialize_data.py](https://github.com/vnopanen/COMP.SGN.220-project/blob/master/serialize_data.py "serialize_data.py") to preprocess the dataset
 - run [training.py](https://github.com/vnopanen/COMP.SGN.220-project/blob/master/training.py "training.py") which contains the training, validation and testing procedures
 
@@ -19,7 +19,7 @@ Project is: _in progress_ <!--- _complete_ / _no longer being worked on_ -->
 
 ##  Room for Improvement
 
-TODO: fine tune model, add support for more instruments
+TODO: fine tune model, add dependencies
 
 ##  Acknowledgements
 

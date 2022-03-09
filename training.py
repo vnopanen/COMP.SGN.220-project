@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from cnn_system import CNNSystem
-from utils import plot_confusion_matrix, NUMBER_OF_INSTRUMENTS
+from utils import plot_confusion_matrix, NUMBER_OF_INSTRUMENTS, INSTRUMENTS
 import numpy as np, os
 from torch import cuda, no_grad, argmax
 from torch.optim import Adam
@@ -47,11 +47,12 @@ def main():
     dataiter = iter(testing_dataloader)
     data = dataiter.next()
     features, cls = data
-
+    print(features.shape, cls.shape)
 
     dataiter = iter(training_dataloader)
     data = dataiter.next()
     features, cls = data
+    print(features.shape, cls.shape)
 
 
     # Check if CUDA is available, else use CPU
@@ -60,7 +61,7 @@ def main():
 
     # Instantiate our DNN
     cnn = CNNSystem(num_channels=2, 
-                    in_features=960, 
+                    in_features=6720,
                     output_classes=NUMBER_OF_INSTRUMENTS)
         
     # Pass DNN to the available device.
@@ -129,7 +130,6 @@ def main():
                 # Process on the appropriate device.
                 feature = feature.to(device)
                 cls = cls.to(device)
-
                 # Get the predictions of our model.
                 y_hat = cnn(feature)
 
@@ -141,8 +141,10 @@ def main():
                 epoch_loss_validation.append(loss.item())
 
                 # Calculate accuarcy
+
                 max_index = y_hat.max(dim = 1)[1]
-                max_index = one_hot(max_index, num_classes=4)
+                max_index = one_hot(max_index,
+                                    num_classes=NUMBER_OF_INSTRUMENTS)
                 acc += (max_index == cls).all(dim=1).sum().item()
                 
         # Calculate mean losses.
@@ -195,8 +197,9 @@ def main():
 
                         # Calculate accuracy
                         max_index = y_hat.max(dim = 1)[1]
-                        max_index = one_hot(max_index, num_classes=4)
-                        acc += (max_index == cls).all(dim=1).sum().item()
+                        max_index = one_hot(max_index,
+                                            num_classes=NUMBER_OF_INSTRUMENTS)
+                        acc += sum(cls[cls==max_index]).item()
 
                         y_pred.append(argmax(max_index, dim=1).tolist())
                         y_true.append(argmax(cls, dim=1).tolist())
@@ -210,7 +213,7 @@ def main():
                 y_true = np.array(y_true).flatten()
                 y_pred = np.array(y_pred).flatten()
                 cm = confusion_matrix(y_true, y_pred)
-                classes = ['cel', 'flu', 'pia', 'sax']
+                classes = INSTRUMENTS.keys()
                 plot_confusion_matrix(cm, classes)
 
                 break

@@ -25,13 +25,16 @@ __all__ = [ 'create_one_hot_encoding',
 INST_PATTERN = '(\[)(...)(\])'
 INSTRUMENTS = {
     'cel': 0,
-    'flu': 1,
-    'pia': 2,
-    'sax': 3,
-    #'voi': 4,
-    #'tru': 5,
-    #'vio': 6,
-    #'gel': 7,
+    'cla': 1,
+    'flu': 2,
+    'gac': 3,
+    'gel': 4,
+    'org': 5,
+    'pia': 6,
+    'sax': 7,
+    'tru': 8,
+    'vio': 9,
+    'voi': 10
 }
 NUMBER_OF_INSTRUMENTS = len(INSTRUMENTS)
 
@@ -70,7 +73,7 @@ def extract_mel_band_energies(audio_file: np.ndarray,
                               sr: Optional[int] = 44100,
                               n_fft: Optional[int] = 1024,
                               hop_length: Optional[int] = 512,
-                              n_mels: Optional[int] = 40) \
+                              n_mels: Optional[int] = 128) \
         -> np.ndarray:
     """Extracts and returns the mel-band energies from the `audio_file` file.
 
