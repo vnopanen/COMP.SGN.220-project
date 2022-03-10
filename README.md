@@ -15,11 +15,11 @@
 
 ##  Project Status
 
-Project is: _in progress_ <!--- _complete_ / _no longer being worked on_ -->
+Project is:  _complete_
 
 ##  Room for Improvement
 
-TODO: fine tune model, add dependencies
+Implement multi classifier
 
 ##  Acknowledgements
 
